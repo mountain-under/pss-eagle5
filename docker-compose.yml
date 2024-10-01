@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  frontend:
+    container_name: yamashita_react-app
+    build:
+      context: ./app/frontend
+      dockerfile: Dockerfile # フロントエンドのDockerfile
+    volumes:
+      - ./app/frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    stdin_open: true
+
+  backend:
+    container_name: yamashita_express-app
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile # バックエンド用のDockerfile
+    volumes:
+      - ./app/backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - /mnt/external_hdd_black:/images
+    ports:
+      - 5000:5000
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    networks:
+      - pss_global_network
+networks:
+  pss_global_network:
+    external: true
